@@ -1,0 +1,42 @@
+{
+  "name": "ethereumgasstationserver",
+  "version": "0.0.1",
+  "description": "API server for the Ethereum Gasstation",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint .",
+    "start": "./bin.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://sponnet@github.com:EthereumGasStation/ethereumgasstationserver.git"
+  },
+  "keywords": [
+    "IPFS",
+    "Web3"
+  ],
+  "author": "Stefaan Ponnet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ipfsconsortium/IPFSConsortiumProxy/issues"
+  },
+  "homepage": "https://github.com/ipfsconsortium/IPFSConsortiumProxy#readme",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "command-line-tool": "^0.8.0",
+    "dotenv": "^5.0.0",
+    "ethereumgasstation": "0.0.1",
+    "express": "^4.16.3",
+    "web3": "^1.0.0-beta2",
+    "winston": "^3.0.0-rc1"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.1",
+    "eslint-config-google": "^0.9.1",
+    "mocha": "^5.0.1",
+    "nyc": "^11.4.1"
+  },
+  "bin": {
+    "ethereumgasstationserver": "bin.js"
+  }
+}
