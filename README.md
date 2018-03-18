@@ -37,6 +37,22 @@ Type `ethereumgasstationserver -h` for more info about the available parameters.
 
 just type `ethereumgasstationserver` to start it up.
 
+# API
+
+## Endpoint
+`GET /tokens`
+
+## Request parameters
+none
+
+## Response format
+``
+{
+'swarm-city':'0xb9e7f8568e08d5659f5d29c4997173d84cdf2607'
+}
+``
+
+The response is an object containing the ticker + Ethereum token => address pairs that this gasstation accepts.
 
 # Get in touch
 
