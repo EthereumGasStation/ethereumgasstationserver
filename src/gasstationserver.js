@@ -41,6 +41,10 @@ class GasstationServer {
 	 */
 	go() {
 
+		const tokens = {
+			"swarm-city" : "0xb9e7f8568e08d5659f5d29c4997173d84cdf2607"
+		}
+
 		const Web3 = require('web3');
 
 		const web3 = new Web3(new Web3.providers.WebsocketProvider(this.options.web3hostws));
@@ -65,6 +69,14 @@ class GasstationServer {
 		app.use(allowCrossDomain);
 		app.use(bodyparser.json());
 
+		app.get('/tokens', function(req, res) {
+			res.status(200).json(tokens);
+		});
+
+		app.post('/getquote', function(req, res) {
+			this.logger.info('req %j',req);
+			res.status(200).json(tokens);
+		});
 
 		// start webserver...
 		app.listen(this.options.port, () => {
