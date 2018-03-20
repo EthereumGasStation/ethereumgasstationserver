@@ -40,37 +40,12 @@ just type `ethereumgasstationserver` to start it up.
 # API
 
 ## Endpoint
-`GET /info`
-
-Returns the supported tokens by this gasstation. + generic gasstation info.
-
-## Request parameters
-none
-
-## Response format
-
-```
-{
- uplift : 10,
- netid: 1,
- gasstationaddress: '0x.....',
- maxgas: 1000000000,
- availablegas: '1000000000000000',
- tokens: {
-   'swarm-city': {
-    'address':'0xb9e7f8568e08d5659f5d29c4997173d84cdf2607',
-    }
-   ...
- }
-}
-```
-
-
-## Endpoint
-`GET /fillinfo/<address>`
+`GET /info/<address>`
 
 Returns the configuration of this gasstation & the tokens that you could use this gasstation API with. It checks if the address fits the criteria, and has a balance of the given token.
 It returns all the neccesary info to start using the gasstation with this token.
+
+If you want to get generic info on the gasstation - don't provide the `address` parameter 
 
 ## Request parameters
 * `address` : (String) the pubkey you want to get info for.
