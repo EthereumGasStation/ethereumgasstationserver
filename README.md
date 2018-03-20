@@ -35,9 +35,12 @@ Type `ethereumgasstationserver -h` for more info about the available parameters.
 
 ## Running
 
-just type `ethereumgasstationserver` to start it up.
+Just type `ethereumgasstationserver` to start it up.
 
-# API
+It will start a REST server that implements the following API:
+
+
+# REST API
 
 ## Endpoint
 `GET /info/<address>`
@@ -51,20 +54,25 @@ If you want to get generic info on the gasstation - don't provide the `address` 
 * `address` : (String) the pubkey you want to get info for.
 
 ## Response format
+
+### Without parameter
+`GET /info`
+
+Response code : `200`
+
 ```
 {
- uplift : 10,
- netid: 1,
- gasstationaddress: '0x.....',
- availablegas: '10000',
- maxgas: 1000000000, 
- tokens : {
-   'swarm-city': {
-     tokenaddress: '0xb9e7f8568e08d5659f5d29c4997173d84cdf2607',
-     balance : '2233001'
+  "uplift": 66,
+  "netid": 3,
+  "gasstationaddress": "0x5f0f9749192eee39978f14a0fef0e960cce45f50",
+  "maxgas": "100000000",
+  "availablegas": "1000000000000000000",
+  "tokens": [
+    {
+      "ticker": "swarm-city",
+      "address": "0x7932236cc4e5dbd840d9a52b009fed3582d4bf4f"
     }
-    ...
-  }
+  ]
 }
 ```
 * `uplift` : (Number)  The uplift in percent that this gasstation takes on the market price
@@ -72,20 +80,56 @@ If you want to get generic info on the gasstation - don't provide the `address` 
 * `gasstationaddress` : (String) the address of the accompanying gasstation smart contract
 * `availablegas` : (String) The amount of gas still present in this gassttion
 * `maxgas` : the max amount of gas you can request in a request to fill up your account
-* `tokens` : A an object containing the ticker + Ethereum token => address pairs that this gasstation accepts.
+* `tokens` : An array containing the ticker + Ethereum token => address pairs that this gasstation accepts.
 
+### With parameter - OK
+Example: `GET /info/0x702029796b00f50BcFCE9b0Bb0C402bc453595D8`
 
-### On Error
+Response code : `200`
+
 ```
 {
- errorcode : 1
+	"uplift": 66,
+	"netid": 3,
+	"gasstationaddress": "0x5f0f9749192eee39978f14a0fef0e960cce45f50",
+	"maxgas": "100000000",
+	"availablegas": "1000000000000000000",
+	"tokens": [{
+		"ticker": "swarm-city",
+		"address": "0x7932236cc4e5dbd840d9a52b009fed3582d4bf4f",
+		"balance": "1000000000100000000"
+	}]
 }
 ```
 
-* `errorcode` :
-	* 1 :'ACCOUNT_IS_CONTRACT'
-	* 2: 'ACCOUNT_IS_NOT_EMPTY' 	
-	* 3: 'ACCOUNT_IS_NOT_UNUSED' 
+In the case that the address is good for using the gasstation, the tokens array will be decorated with the token balance of the specific address.
+
+### With parameter - error
+
+Example: `GET /info/0x5f0f9749192eee39978f14a0fef0e960cce45f50`
+
+Response code : `403`
+
+```
+{
+	"uplift": 66,
+	"netid": 3,
+	"gasstationaddress": "0x5f0f9749192eee39978f14a0fef0e960cce45f50",
+	"maxgas": "100000000",
+	"availablegas": "1000000000000000000",
+	"accountbalance": "1000000000000000000",
+	"error": {
+		"code": 1,
+		"message": "account is a contract"
+	}
+}
+```
+
+`error.code` can be one of the following:
+
+* `1 : ACCOUNT_IS_CONTRACT` The given account is a smart contract. This hinders the correct calculation of the cas cost to do the exchange - so the gasstation does not allow smart contracts to be filled-up.
+* `2 : ACCOUNT_IS_NOT_EMPTY` The given account already has an ETH balance. It does not need gas.
+* `3 : ACCOUNT_IS_NOT_UNUSED` The nonce of the account must be 1
 
 
 
