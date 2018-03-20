@@ -39,13 +39,19 @@ class GasstationServerCli {
 			contractaddress: options.contractaddress || process.env.CONTRACTADDRESS,
 			privatekey: options.privatekey || process.env.PRIVATEKEY,
 			port: options.port || process.env.PORT,
+			uplift: options.uplift || process.env.UPLIFT,
+			validity: options.validity || process.env.VALIDITY,
+			tokens: options.tokens || process.env.TOKENS,
 		};
 
 		if (
 			!instanceOptions.web3hostws ||
 			!instanceOptions.contractaddress ||
 			!instanceOptions.privatekey ||
-			!instanceOptions.port
+			!instanceOptions.port ||
+			!instanceOptions.uplift ||
+			!instanceOptions.validity ||
+			!instanceOptions.tokens
 		) {
 			options.help = true;
 		}
@@ -55,6 +61,16 @@ class GasstationServerCli {
 			this.stdout.write(cli.usage + os.EOL);
 			return;
 		}
+
+		let acceptedTokens = {};
+		options.tokens.split(',').forEach((item)=>{
+			console.log('token',item);
+			const parts = item.split('|');
+			if (parts.length === 2){
+				acceptedTokens[parts[0]] = parts[1];
+			}
+		});
+		instanceOptions.tokens = acceptedTokens;
 
 		const server = new GasstationServer(instanceOptions);
 		server.go();

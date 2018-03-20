@@ -40,19 +40,137 @@ just type `ethereumgasstationserver` to start it up.
 # API
 
 ## Endpoint
-`GET /tokens`
+`GET /info`
+
+Returns the supported tokens by this gasstation. + generic gasstation info.
 
 ## Request parameters
 none
 
 ## Response format
-``
-{
-'swarm-city':'0xb9e7f8568e08d5659f5d29c4997173d84cdf2607'
-}
-``
 
-The response is an object containing the ticker + Ethereum token => address pairs that this gasstation accepts.
+```
+{
+ uplift : 10,
+ netid: 1,
+ gasstationaddress: '0x.....',
+ maxgas: 1000000000,
+ availablegas: '1000000000000000',
+ tokens: {
+   'swarm-city': {
+    'address':'0xb9e7f8568e08d5659f5d29c4997173d84cdf2607',
+    }
+   ...
+ }
+}
+```
+
+
+## Endpoint
+`GET /fillinfo/<address>`
+
+Returns the configuration of this gasstation & the tokens that you could use this gasstation API with. It checks if the address fits the criteria, and has a balance of the given token.
+It returns all the neccesary info to start using the gasstation with this token.
+
+## Request parameters
+* `address` : (String) the pubkey you want to get info for.
+
+## Response format
+```
+{
+ uplift : 10,
+ netid: 1,
+ gasstationaddress: '0x.....',
+ availablegas: '10000',
+ maxgas: 1000000000, 
+ tokens : {
+   'swarm-city': {
+     tokenaddress: '0xb9e7f8568e08d5659f5d29c4997173d84cdf2607',
+     balance : '2233001'
+    }
+    ...
+  }
+}
+```
+* `uplift` : (Number)  The uplift in percent that this gasstation takes on the market price
+* `netid` : (Number> the network ID this gasstation is connected to
+* `gasstationaddress` : (String) the address of the accompanying gasstation smart contract
+* `availablegas` : (String) The amount of gas still present in this gassttion
+* `maxgas` : the max amount of gas you can request in a request to fill up your account
+* `tokens` : A an object containing the ticker + Ethereum token => address pairs that this gasstation accepts.
+
+
+### On Error
+```
+{
+ errorcode : 1
+}
+```
+
+* `errorcode` :
+	* 1 :'ACCOUNT_IS_CONTRACT'
+	* 2: 'ACCOUNT_IS_NOT_EMPTY' 	
+	* 3: 'ACCOUNT_IS_NOT_UNUSED' 
+
+
+
+## Endpoint 
+`POST /fillrequest`
+
+Request a quote from the gasstation to exchange your token for gas. The service will reply with an offer that is cryptographically signed by the gasstation maintainer.
+
+## Request parameters
+```
+{
+ 'address' : '0x1234.......5678',
+ 'gasrequested' : '100000000000',
+ 'tokenoffered' : 'swarm-city'
+}
+```
+
+* `address` : (String) The address you want gas for
+* `gasrequested` : (String) The amount of gas you want to receive
+* `tokenoffered` : (String) a ticker of a token you want to send in return.
+
+## Response format
+```
+{
+ 'gas' : '100000000000',
+ 'tokens' : '4455666',
+ 'validuntil' : 2304556,
+ 'r' : '0x...',
+ 's' : '0x...'
+ 'v' : 12,
+}
+```
+* `gas` : (String) The amount of gas you will receive
+* `tokens` : (String) The amount of tokens that this will cost
+* `validuntil` : blocknumber until when this offer remains valid  
+* `r` `s` `v` : Signature needed to  
+
+## Endpoint
+`POST /fill`
+
+Executes the fillup.
+
+## Parameters
+
+```
+{
+ 'allowancetx' : '0x.... ....',
+ 'address' : '0x1234.......5678',
+ 'token' : 'swarm-city'
+ 'gas' : '100000000000',
+ 'tokens' : '445566',
+ 'validuntil' : 2304556,
+ 'r' : '0x...',
+ 's' : '0x...'
+ 'v' : 12,
+}
+```
+* `allowancetx` : a signed transaction giving an allowance to the gasstation for `tokensoffered` tokens.
+* `address` : the address requesting gas
+* `gas` `tokens` `validuntil` `r` `s` `v` : the response from your previous `/fillrequest` query.
 
 # Get in touch
 

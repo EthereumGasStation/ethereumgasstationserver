@@ -16,10 +16,25 @@ exports.definitions = [
     type: String,
     description: 'private key of your gasstation signer',
   },
-{
+  {
     name: 'port',
     type: Number,
     description: 'HTTP port to listen to',
+  },  
+  {
+    name: 'uplift',
+    type: Number,
+    description: 'uplift in % of token marketprice ( ex. 5 )',
+  },  
+  {
+    name: 'validity',
+    type: Number,
+    description: 'amount of blocks to keep price quotes valid ( ex. 10 )',
+  },  
+  {
+    name: 'tokens',
+    type: String,
+    description: 'list of accepted tokens. ticker|address. ex. swarm-city|0x000345,token2|0x0000123',
   },  
   {
     name: 'help',

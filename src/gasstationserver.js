@@ -69,6 +69,14 @@ class GasstationServer {
 		app.use(allowCrossDomain);
 		app.use(bodyparser.json());
 
+		const routes = {
+			info : require('./routes/info')(this.options)
+		};
+
+
+		app.get('/info', routes.info );
+
+
 		app.get('/tokens', function(req, res) {
 			res.status(200).json(tokens);
 		});
