@@ -12,9 +12,13 @@ describe('', () => {
 		serverInstance = new GasstationServer({
 			web3hostws: "wss://ropsten.infura.io/ws",
 			contractaddress: "0x5f0f9749192eee39978f14a0fef0e960cce45f50",
-			privatekey: "QUAAK",
+			privatekey: "aeb3fe04acb77028e63d256d2e9d37c6da441a2614eab55b0a4986a22ecf586b",
 			port: randomPort,
 			uplift: 66,
+			tokens: [{
+				ticker: 'swarm-city',
+				address: '0x7932236CC4E5dBD840D9A52b009Fed3582d4Bf4f'
+			}]
 		});
 		serverInstance.go().then(done);
 	});
