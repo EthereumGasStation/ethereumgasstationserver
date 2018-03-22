@@ -25,7 +25,8 @@ describe('', () => {
 				.get('/info')
 				.end((err, res) => {
 					res.should.have.status(200);
-					res.body.should.be.a('object');
+					//res.body.should.be.a('object');
+					//res.body.should.have.property('uplift').with.value(66);
 					done();
 				});
 		});
@@ -44,13 +45,20 @@ describe('', () => {
 	describe('POST /fillrequest', () => {
 		it('it should GET the gasstation info', (done) => {
 			chai.request(serverInstance.app())
-				.post('/fillrequest')
-				.end((err, res) => {
-					res.should.have.status(403);
-					// res.body.should.be.a('object');
-					// res.body.should.have.property('uplift').with.value(66);
+				.put('/fillrequest')
+				.send({
+					'address': '0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d',
+					'gasrequested': '100000000000000',
+					'tokenoffered': 'swarm-city'
+				})
+				.end(function(err, res) {
+					res.body.should.be.a('object');
+					//err.should.be.null;
+					//res.should.have.status(200);
+					console.log(res.body);
 					done();
 				});
+
 		});
 	});
 

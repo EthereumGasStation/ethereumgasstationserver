@@ -70,7 +70,7 @@ class GasstationServer {
 
 
 		app.get('/info/:address?', routes.info);
-		app.post('/fillrequest', routes.fillrequest);
+		app.put('/fillrequest', routes.fillrequest);
 
 
 		app.post('/getquote', function(req, res) {
