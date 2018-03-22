@@ -157,15 +157,17 @@ Request a quote from the gasstation to exchange your token for gas. The service 
  'gas' : '100000000000',
  'tokens' : '4455666',
  'validuntil' : 2304556,
- 'r' : '0x...',
- 's' : '0x...'
- 'v' : 12,
+ 'serversig' : {
+   'r' : '0x...',
+   's' : '0x...'
+   'v' : 12,
+ }
 }
 ```
 * `gas` : (String) The amount of gas you will receive
 * `tokens` : (String) The amount of tokens that this will cost
 * `validuntil` : blocknumber until when this offer remains valid  
-* `r` `s` `v` : Signature needed to  
+* `serversig` : The gastank parameters , signed by the gastank signer account  
 
 ## Endpoint
 `POST /fill`
@@ -182,14 +184,23 @@ Executes the fillup.
  'gas' : '100000000000',
  'tokens' : '445566',
  'validuntil' : 2304556,
- 'r' : '0x...',
- 's' : '0x...'
- 'v' : 12,
+ 'serversig' : {
+   'r' : '0x...',
+   's' : '0x...'
+   'v' : 12,
+ },
+ 'clientsig' : {
+   'r' : '0x...',
+   's' : '0x...'
+   'v' : 12,
+ }
 }
 ```
 * `allowancetx` : a signed transaction giving an allowance to the gasstation for `tokensoffered` tokens.
 * `address` : the address requesting gas
-* `gas` `tokens` `validuntil` `r` `s` `v` : the response from your previous `/fillrequest` query.
+* `gas` `tokens` `validuntil` : the response from your previous `/fillrequest` query.
+* `serversig` : The gastank parameters , signed by the gastank signer account - as received from your previous `/fillrequest` query.
+* `serversig` : The gastank parameters , signed by the client (you) to allow the server to execute the exchange through the smart contract.  
 
 # Get in touch
 
