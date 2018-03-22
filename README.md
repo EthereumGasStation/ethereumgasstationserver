@@ -180,7 +180,7 @@ Executes the fillup.
 {
  'allowancetx' : '0x.... ....',
  'address' : '0x1234.......5678',
- 'token' : 'swarm-city'
+ 'tokenoffered' : 'swarm-city'
  'gas' : '100000000000',
  'tokens' : '445566',
  'validuntil' : 2304556,
@@ -198,6 +198,7 @@ Executes the fillup.
 ```
 * `allowancetx` : a signed transaction giving an allowance to the gasstation for `tokensoffered` tokens.
 * `address` : the address requesting gas
+* `tokenoffered` : ticker of token offered
 * `gas` `tokens` `validuntil` : the response from your previous `/fillrequest` query.
 * `serversig` : The gastank parameters , signed by the gastank signer account - as received from your previous `/fillrequest` query.
 * `serversig` : The gastank parameters , signed by the client (you) to allow the server to execute the exchange through the smart contract.  

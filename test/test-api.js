@@ -1,7 +1,8 @@
-let chai = require('chai');
-let chaiHttp = require('chai-http');
-let GasstationServer = require('../src/gasstationserver.js');
-let should = chai.should();
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const GasstationServer = require('../src/gasstationserver.js');
+const should = chai.should();
+const Web3 = require('web3');
 
 chai.use(chaiHttp);
 
@@ -47,8 +48,10 @@ describe('', () => {
 		});
 	});
 
+	let fillrequestResponse;
+
 	describe('POST /fillrequest', () => {
-		it('it should GET the gasstation info', (done) => {
+		it('it should POST the fillrequest data', (done) => {
 			chai.request(serverInstance.app())
 				.put('/fillrequest')
 				.send({
@@ -61,10 +64,53 @@ describe('', () => {
 					//err.should.be.null;
 					//res.should.have.status(200);
 					console.log(res.body);
+					fillrequestResponse = res.body
 					done();
 				});
-
 		});
 	});
 
+
+	describe('POST /fill', () => {
+		it('it should GET the gasstation info', (done) => {
+
+			const web3 = new Web3(new Web3.providers.WebsocketProvider(serverInstance.options.web3hostws));
+			const gasstationlib = require('ethereumgasstation/lib/gasstationlib.js')({
+				currentProvider: web3.currentProvider
+			});
+
+
+			let tokenInfo = serverInstance.options.tokens.find(function(element) {
+				return (element.ticker == 'swarm-city');
+			});
+			
+			let clientSig = gasstationlib.signGastankParameters(
+				tokenInfo.address,
+				serverInstance.options.contractaddress,
+				fillrequestResponse.tokens,
+				fillrequestResponse.gas,
+				fillrequestResponse.validuntil,
+				'741d31a9e3d155f4a7639ad702a179f92438fc165d27f2d916fc65c0d31a2504');
+
+			chai.request(serverInstance.app())
+				.put('/fill')
+				.send({
+					'allowancetx': '0x.... ....',
+					'address': '0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d',
+					'tokenoffered': 'swarm-city',
+					'gas': fillrequestResponse.gas,
+					'tokens': fillrequestResponse.tokens,
+					'validuntil': 2304556,
+					'serversig': fillrequestResponse.serversig,
+					'clientsig': clientSig,
+				})
+				.end(function(err, res) {
+					res.body.should.be.a('object');
+					//err.should.be.null;
+					//res.should.have.status(200);
+					console.log(res.body);
+					done();
+				});
+		});
+	});
 });

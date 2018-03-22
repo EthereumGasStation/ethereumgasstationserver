@@ -34,15 +34,8 @@ class GasstationServer {
 		});
 		this.options = options;
 
-
-		const tokens = {
-			"swarm-city": "0xb9e7f8568e08d5659f5d29c4997173d84cdf2607"
-		}
-
 		const Web3 = require('web3');
-
 		const web3 = new Web3(new Web3.providers.WebsocketProvider(this.options.web3hostws));
-
 		var ethereumgasstationlib = require('ethereumgasstation/lib/gasstationlib')({
 			currentProvider: web3.currentProvider
 		});
@@ -66,17 +59,12 @@ class GasstationServer {
 		const routes = {
 			info: require('./routes/info')(this.options),
 			fillrequest: require('./routes/fillrequest')(this.options),
+			fill: require('./routes/fill')(this.options),
 		};
-
 
 		app.get('/info/:address?', routes.info);
 		app.put('/fillrequest', routes.fillrequest);
-
-
-		app.post('/getquote', function(req, res) {
-			this.logger.info('req %j', req);
-			res.status(200).json(tokens);
-		});
+		app.put('/fill', routes.fill);
 	}
 
 	app() {
@@ -88,8 +76,6 @@ class GasstationServer {
 	 *
 	 */
 	go() {
-
-
 		return new Promise((resolve, reject) => {
 			// start webserver...
 			app.listen(this.options.port, () => {
@@ -97,8 +83,6 @@ class GasstationServer {
 				resolve();
 			});
 		});
-
-
 	}
 }
 module.exports = GasstationServer;
