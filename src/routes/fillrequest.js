@@ -1,13 +1,8 @@
 'use strict';
 const Web3 = require('web3');
-const GasStation = require('ethereumgasstation/build/contracts/GasStation.json');
-const ERC20 = require('ethereumgasstation/build/contracts/ERC20.json');
 
 module.exports = (options) => {
-
 	const tokenpricelib = require('ethereumgasstation/lib/tokenpricelib')(options);
-
-
 
 	return (req, res) => {
 		const web3 = new Web3(new Web3.providers.WebsocketProvider(options.web3hostws));
@@ -15,7 +10,11 @@ module.exports = (options) => {
 			currentProvider: web3.currentProvider
 		});
 
-		tokenpricelib.getPrice(req.body.tokenoffered).then((price) => {
+		Promise.all([
+			tokenpricelib.getPrice(req.body.tokenoffered),
+			web3.eth.getBlockNumber(),
+		]).then(([price, block]) => {
+
 			let ethprice = parseFloat(price.price_eth) * 100 / options.uplift;
 			let gasRequested = new web3.utils.BN(req.body.gasrequested);
 			let tokensRequired = Math.ceil(ethprice * gasRequested.toNumber(10));
@@ -24,7 +23,7 @@ module.exports = (options) => {
 				return (element.ticker == req.body.tokenoffered);
 			});
 
-			let validuntil = 12345;
+			let validuntil = block + options.validity;
 
 			let clientSig = gasstationlib.signGastankParameters(
 				tokenInfo.address,
@@ -39,11 +38,13 @@ module.exports = (options) => {
 				gas: gasRequested.toString(10),
 				tokens: tokensRequired.toString(10),
 				validuntil: validuntil.toString(10),
-				r: clientSig.r,
-				s: clientSig.s,
-				v: clientSig.v,
+				serversig: {
+					r: clientSig.r,
+					s: clientSig.s,
+					v: clientSig.v,
+				}
 			});
-		}).catch((e)=>{
+		}).catch((e) => {
 			return res.status(500).json({
 				message: e
 			});

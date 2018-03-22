@@ -15,6 +15,7 @@ describe('', () => {
 			privatekey: "aeb3fe04acb77028e63d256d2e9d37c6da441a2614eab55b0a4986a22ecf586b",
 			port: randomPort,
 			uplift: 66,
+			validity: 20,
 			tokens: [{
 				ticker: 'swarm-city',
 				address: '0x7932236CC4E5dBD840D9A52b009Fed3582d4Bf4f'
