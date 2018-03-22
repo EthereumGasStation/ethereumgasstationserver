@@ -44,8 +44,7 @@ class GasstationServerCli {
 			tokens: options.tokens || process.env.TOKENS,
 		};
 
-		if (
-			!instanceOptions.web3hostws ||
+		if (!instanceOptions.web3hostws ||
 			!instanceOptions.contractaddress ||
 			!instanceOptions.privatekey ||
 			!instanceOptions.port ||
@@ -62,12 +61,14 @@ class GasstationServerCli {
 			return;
 		}
 
-		let acceptedTokens = {};
-		options.tokens.split(',').forEach((item)=>{
-			console.log('token',item);
+		let acceptedTokens = [];
+		options.tokens.split(',').forEach((item) => {
 			const parts = item.split('|');
-			if (parts.length === 2){
-				acceptedTokens[parts[0]] = parts[1];
+			if (parts.length === 2) {
+				acceptedTokens.push({
+					ticker: parts[0],
+					address: parts[1],
+				});
 			}
 		});
 		instanceOptions.tokens = acceptedTokens;

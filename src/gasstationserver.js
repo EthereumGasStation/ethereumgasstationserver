@@ -74,12 +74,8 @@ class GasstationServer {
 		};
 
 
-		app.get('/info', routes.info );
+		app.get('/info/:address?', routes.info );
 
-
-		app.get('/tokens', function(req, res) {
-			res.status(200).json(tokens);
-		});
 
 		app.post('/getquote', function(req, res) {
 			this.logger.info('req %j',req);
