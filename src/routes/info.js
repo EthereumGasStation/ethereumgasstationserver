@@ -76,11 +76,12 @@ module.exports = (options) => {
 						});
 					});
 			} else {
-				return res.status(200).json(
+				res.status(200).json(
 					Object.assign({},
 						info, {
 							tokens: options.tokens
 						}));
+				res.end();
 			}
 		});
 	}

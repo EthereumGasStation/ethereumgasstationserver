@@ -1,32 +1,57 @@
 let chai = require('chai');
 let chaiHttp = require('chai-http');
-let server = require('../lib/gasstationserver.js');
+let GasstationServer = require('../src/gasstationserver.js');
 let should = chai.should();
 
 chai.use(chaiHttp);
 
 describe('', () => {
 	let serverInstance;
-	beforeEach((done) => {
+	const randomPort = Math.floor(1000 + Math.random() * 9000);
+	before((done) => {
 		serverInstance = new GasstationServer({
-			web3hostws: "wss://mainnet.infura.io/ws",
-			contractaddress: "0x0000",
-			privatekey: "0x0000",
-			port: 7777
+			web3hostws: "wss://ropsten.infura.io/ws",
+			contractaddress: "0x5f0f9749192eee39978f14a0fef0e960cce45f50",
+			privatekey: "QUAAK",
+			port: randomPort,
+			uplift: 66,
 		});
-		serverInstance.go();
+		serverInstance.go().then(done);
 	});
 
-	describe('GET /tokens', () => {
-		it('it should GET all the tokens', (done) => {
-			chai.request(server)
-				.get('/tokens')
+	describe('GET /info', () => {
+		it('it should GET the gasstation info', (done) => {
+			chai.request(serverInstance.app())
+				.get('/info')
 				.end((err, res) => {
 					res.should.have.status(200);
 					res.body.should.be.a('object');
-					res.body.length.should.be.eql(0);
+					done();
+				});
+		});
+		it('it should GET gasstation info for 1 address', (done) => {
+			chai.request(serverInstance.app())
+				.get('/info/0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d')
+				.end((err, res) => {
+					res.should.have.status(403);
+					// res.body.should.be.a('object');
+					// res.body.should.have.property('uplift').with.value(66);
 					done();
 				});
 		});
 	});
+
+	describe('POST /fillrequest', () => {
+		it('it should GET the gasstation info', (done) => {
+			chai.request(serverInstance.app())
+				.post('/fillrequest')
+				.end((err, res) => {
+					res.should.have.status(403);
+					// res.body.should.be.a('object');
+					// res.body.should.have.property('uplift').with.value(66);
+					done();
+				});
+		});
+	});
+
 });

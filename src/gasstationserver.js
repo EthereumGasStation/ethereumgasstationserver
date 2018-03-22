@@ -33,16 +33,10 @@ class GasstationServer {
 			transports: [new transports.Console()],
 		});
 		this.options = options;
-	}
 
-	/**
-	 * Bootstrap the server
-	 *
-	 */
-	go() {
 
 		const tokens = {
-			"swarm-city" : "0xb9e7f8568e08d5659f5d29c4997173d84cdf2607"
+			"swarm-city": "0xb9e7f8568e08d5659f5d29c4997173d84cdf2607"
 		}
 
 		const Web3 = require('web3');
@@ -70,21 +64,38 @@ class GasstationServer {
 		app.use(bodyparser.json());
 
 		const routes = {
-			info : require('./routes/info')(this.options)
+			info: require('./routes/info')(this.options),
+			fillrequest: require('./routes/fillrequest')(this.options),
 		};
 
 
-		app.get('/info/:address?', routes.info );
+		app.get('/info/:address?', routes.info);
+		app.post('/fillrequest', routes.fillrequest);
 
 
 		app.post('/getquote', function(req, res) {
-			this.logger.info('req %j',req);
+			this.logger.info('req %j', req);
 			res.status(200).json(tokens);
 		});
+	}
 
-		// start webserver...
-		app.listen(this.options.port, () => {
-			this.logger.info('server listening on port %d', this.options.port);
+	app() {
+		return app;
+	}
+
+	/**
+	 * Bootstrap the server
+	 *
+	 */
+	go() {
+
+
+		return new Promise((resolve, reject) => {
+			// start webserver...
+			app.listen(this.options.port, () => {
+				this.logger.info('server listening on port %d', this.options.port);
+				resolve();
+			});
 		});
 
 
