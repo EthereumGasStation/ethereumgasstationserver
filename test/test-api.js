@@ -83,7 +83,10 @@ describe('', () => {
 			let tokenInfo = serverInstance.options.tokens.find(function(element) {
 				return (element.ticker == 'swarm-city');
 			});
-			
+
+			// sign off on the parameters, giving the gasstation operator ('signer')
+			// my required signature to execute the gas-exchange ONLY with the 
+			// parameters i agree upon.
 			let clientSig = gasstationlib.signGastankParameters(
 				tokenInfo.address,
 				serverInstance.options.contractaddress,
@@ -92,25 +95,37 @@ describe('', () => {
 				fillrequestResponse.validuntil,
 				'741d31a9e3d155f4a7639ad702a179f92438fc165d27f2d916fc65c0d31a2504');
 
-			chai.request(serverInstance.app())
-				.put('/fill')
-				.send({
-					'allowancetx': '0x.... ....',
-					'address': '0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d',
-					'tokenoffered': 'swarm-city',
-					'gas': fillrequestResponse.gas,
-					'tokens': fillrequestResponse.tokens,
-					'validuntil': 2304556,
-					'serversig': fillrequestResponse.serversig,
-					'clientsig': clientSig,
-				})
-				.end(function(err, res) {
-					res.body.should.be.a('object');
-					//err.should.be.null;
-					//res.should.have.status(200);
-					console.log(res.body);
-					done();
-				});
+			// generate an approval transaction to allow the gasstation contract
+			// to withdraw the agreed amount of tokens from my account.
+			gasstationlib.getapprovaltx(
+				'0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d',
+				'741d31a9e3d155f4a7639ad702a179f92438fc165d27f2d916fc65c0d31a2504',
+				tokenInfo.address,
+				fillrequestResponse.tokens,
+				serverInstance.options.contractaddress
+			).then((approvalTx) => {
+
+				// send everything through...
+				chai.request(serverInstance.app())
+					.put('/fill')
+					.send({
+						'allowancetx': approvalTx.tx,
+						'address': '0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d',
+						'tokenoffered': 'swarm-city',
+						'gas': fillrequestResponse.gas,
+						'tokens': fillrequestResponse.tokens,
+						'validuntil': 2304556,
+						'serversig': fillrequestResponse.serversig,
+						'clientsig': clientSig,
+					})
+					.end(function(err, res) {
+						res.body.should.be.a('object');
+						//err.should.be.null;
+						//res.should.have.status(200);
+						console.log(res.body);
+						done();
+					});
+			});
 		});
 	});
 });
