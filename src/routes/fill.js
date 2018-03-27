@@ -65,6 +65,7 @@ function verifySignatures(req, options, gasstationlib, web3) {
 			return resolve({
 				allowance: {
 					signer: txSigner,
+					cost: (new ethUtil.BN(tx.gasPrice)).toNumber(10) * (new ethUtil.BN(tx.gasLimit)).toNumber(10)
 				}
 			});
 		});
@@ -81,36 +82,42 @@ module.exports = (options) => {
 
 		verifySignatures(req, options, gasstationlib, web3)
 			.then((signatureInfo) => {
-
 				const gasStationInstance = new web3.eth.Contract(GasStation.abi, options.contractaddress);
 
 				let tokenInfo = options.tokens.find(function(element) {
 					return (element.ticker == req.body.tokenoffered);
 				});
+debugger;
+				// send gas Tx
+				gasstationlib.getGasTx(signatureInfo.allowance.signer, signatureInfo.allowance.cost).then((res) => {
 
-				// create purchaseTx
-				gasstationlib.getPurchaseGastx(
-					tokenInfo.address,
-					req.body.address,
-					req.body.validuntil,
-					req.body.tokens,
-					req.body.gas,
-					options.contractaddress,
-					req.body.clientsig.v,
-					req.body.clientsig.r,
-					req.body.clientsig.s,
-					options.signerpublickey,
-					options.signerprivatekey
-				).then((purchaseGasTx) => {
-					// and throws it in the Tx pool
-					// localWeb3.eth.sendSignedTransaction(purchaseGasTx.tx).on('receipt', (receipt) => {
-					// 	console.log('purchase gas - tx sent', receipt);
-					// 	assert.fail('this TX should throw..');
-					// }).on('error', (err) => {
-					// 	done();
-					// });
-					return res.status(200).json(purchaseGasTx);
+					debugger;
+
+					// create purchaseTx
+					gasstationlib.getPurchaseGastx(
+						tokenInfo.address,
+						req.body.address,
+						req.body.validuntil,
+						req.body.tokens,
+						req.body.gas,
+						options.contractaddress,
+						req.body.clientsig.v,
+						req.body.clientsig.r,
+						req.body.clientsig.s,
+						options.signerpublickey,
+						options.signerprivatekey
+					).then((purchaseGasTx) => {
+						// and throws it in the Tx pool
+						// localWeb3.eth.sendSignedTransaction(purchaseGasTx.tx).on('receipt', (receipt) => {
+						// 	console.log('purchase gas - tx sent', receipt);
+						// 	assert.fail('this TX should throw..');
+						// }).on('error', (err) => {
+						// 	done();
+						// });
+						return res.status(200).json(purchaseGasTx);
+					});
 				});
+
 			}).catch((e) => {
 				return res.status(500).json({
 					message: e

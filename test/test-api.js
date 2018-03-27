@@ -97,7 +97,7 @@ describe('', () => {
 
 			// generate an approval transaction to allow the gasstation contract
 			// to withdraw the agreed amount of tokens from my account.
-			gasstationlib.getapprovaltx(
+			gasstationlib.getApprovalTx(
 				'0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d',
 				'741d31a9e3d155f4a7639ad702a179f92438fc165d27f2d916fc65c0d31a2504',
 				tokenInfo.address,

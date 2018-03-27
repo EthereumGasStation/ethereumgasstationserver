@@ -35,14 +35,8 @@ class GasstationServer {
 		});
 		this.options = options;
 
+		// derive the signer's public key from the private key.
 		this.options.signerpublickey = ethUtil.bufferToHex(ethUtil.privateToAddress(ethUtil.toBuffer(ethUtil.addHexPrefix(this.options.signerprivatekey))));
-
-		const Web3 = require('web3');
-		const web3 = new Web3(new Web3.providers.WebsocketProvider(this.options.web3hostws));
-		var ethereumgasstationlib = require('ethereumgasstation/lib/gasstationlib')({
-			currentProvider: web3.currentProvider
-		});
-		var tokenpricelib = require('ethereumgasstation/lib/tokenpricelib')();
 
 		var allowCrossDomain = function(req, res, next) {
 			res.header('Access-Control-Allow-Origin', '*');
