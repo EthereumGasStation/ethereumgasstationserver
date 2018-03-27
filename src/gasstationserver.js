@@ -5,9 +5,10 @@
  *
  */
 
-var express = require('express');
-var bodyparser = require('body-parser');
-var app = express();
+const express = require('express');
+const bodyparser = require('body-parser');
+const app = express();
+const ethUtil = require('ethereumjs-util');
 
 //var Web3 = require('web3');
 
@@ -33,6 +34,8 @@ class GasstationServer {
 			transports: [new transports.Console()],
 		});
 		this.options = options;
+
+		this.options.signerpublickey = ethUtil.bufferToHex(ethUtil.privateToAddress(ethUtil.toBuffer(ethUtil.addHexPrefix(this.options.signerprivatekey))));
 
 		const Web3 = require('web3');
 		const web3 = new Web3(new Web3.providers.WebsocketProvider(this.options.web3hostws));

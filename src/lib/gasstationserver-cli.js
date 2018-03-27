@@ -37,7 +37,7 @@ class GasstationServerCli {
 		let instanceOptions = {
 			web3hostws: options.web3hostws || process.env.WEB3HOSTWS,
 			contractaddress: options.contractaddress || process.env.CONTRACTADDRESS,
-			privatekey: options.privatekey || process.env.PRIVATEKEY,
+			signerprivatekey: options.privatekey || process.env.PRIVATEKEY,
 			port: options.port || process.env.PORT,
 			uplift: options.uplift || process.env.UPLIFT,
 			validity: options.validity || process.env.VALIDITY,
@@ -46,7 +46,7 @@ class GasstationServerCli {
 
 		if (!instanceOptions.web3hostws ||
 			!instanceOptions.contractaddress ||
-			!instanceOptions.privatekey ||
+			!instanceOptions.signerprivatekey ||
 			!instanceOptions.port ||
 			!instanceOptions.uplift ||
 			!instanceOptions.validity ||
@@ -72,6 +72,7 @@ class GasstationServerCli {
 			}
 		});
 		instanceOptions.tokens = acceptedTokens;
+
 
 		const server = new GasstationServer(instanceOptions);
 		server.go();
