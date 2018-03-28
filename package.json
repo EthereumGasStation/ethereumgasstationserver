@@ -26,6 +26,8 @@
     "command-line-tool": "^0.8.0",
     "dotenv": "^5.0.1",
     "ethereumgasstation": "0.0.4",
+    "ethereumjs-tx": "^1.3.4",
+    "ethereumjs-util": "^5.1.5",
     "express": "^4.16.3",
     "web3": "1.0.0-beta.30",
     "winston": "^3.0.0-rc1"

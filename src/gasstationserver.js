@@ -33,10 +33,15 @@ class GasstationServer {
 			),
 			transports: [new transports.Console()],
 		});
+		options.logger = this.logger;
 		this.options = options;
+
 
 		// derive the signer's public key from the private key.
 		this.options.signerpublickey = ethUtil.bufferToHex(ethUtil.privateToAddress(ethUtil.toBuffer(ethUtil.addHexPrefix(this.options.signerprivatekey))));
+
+		this.logger.info('signer pubkey %s', this.options.signerpublickey);
+
 
 		var allowCrossDomain = function(req, res, next) {
 			res.header('Access-Control-Allow-Origin', '*');

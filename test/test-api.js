@@ -7,6 +7,12 @@ const Web3 = require('web3');
 chai.use(chaiHttp);
 
 describe('', () => {
+
+	const gasstationCustomer = {
+		private: 'd98c26d101a5bcc178ea1615e3fb6c003517609da9e8aed46fb32dcba1cac84d',
+		public: '0x7a9c3f6ebf4c4ddbcf8a40b19ebf2589ff7aeb35'
+	}
+
 	let serverInstance;
 	const randomPort = Math.floor(1000 + Math.random() * 9000);
 	before((done) => {
@@ -38,7 +44,7 @@ describe('', () => {
 		});
 		it('it should GET gasstation info for 1 address', (done) => {
 			chai.request(serverInstance.app())
-				.get('/info/0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d')
+				.get('/info/' + gasstationCustomer.public)
 				.end((err, res) => {
 					res.should.have.status(403);
 					// res.body.should.be.a('object');
@@ -55,7 +61,7 @@ describe('', () => {
 			chai.request(serverInstance.app())
 				.put('/fillrequest')
 				.send({
-					'address': '0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d',
+					'address': gasstationCustomer.public,
 					'gasrequested': '100000000000000',
 					'tokenoffered': 'swarm-city'
 				})
@@ -72,9 +78,10 @@ describe('', () => {
 
 
 	describe('POST /fill', () => {
-		it('it should GET the gasstation info', (done) => {
+		it('it should POST the fill request', (done) => {
 
 			const web3 = new Web3(new Web3.providers.WebsocketProvider(serverInstance.options.web3hostws));
+
 			const gasstationlib = require('ethereumgasstation/lib/gasstationlib.js')({
 				currentProvider: web3.currentProvider
 			});
@@ -93,13 +100,13 @@ describe('', () => {
 				fillrequestResponse.tokens,
 				fillrequestResponse.gas,
 				fillrequestResponse.validuntil,
-				'741d31a9e3d155f4a7639ad702a179f92438fc165d27f2d916fc65c0d31a2504');
+				gasstationCustomer.private);
 
 			// generate an approval transaction to allow the gasstation contract
 			// to withdraw the agreed amount of tokens from my account.
 			gasstationlib.getApprovalTx(
-				'0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d',
-				'741d31a9e3d155f4a7639ad702a179f92438fc165d27f2d916fc65c0d31a2504',
+				gasstationCustomer.public,
+				gasstationCustomer.private,
 				tokenInfo.address,
 				fillrequestResponse.tokens,
 				serverInstance.options.contractaddress
@@ -110,7 +117,7 @@ describe('', () => {
 					.put('/fill')
 					.send({
 						'allowancetx': approvalTx.tx,
-						'address': '0xbb1ea3be053e7bd0bf4c8d6c7616aea7170b027d',
+						'address': gasstationCustomer.public,
 						'tokenoffered': 'swarm-city',
 						'gas': fillrequestResponse.gas,
 						'tokens': fillrequestResponse.tokens,
@@ -119,10 +126,11 @@ describe('', () => {
 						'clientsig': clientSig,
 					})
 					.end(function(err, res) {
+						console.log('res', res.body);
+						res.should.have.status(200);
 						res.body.should.be.a('object');
 						//err.should.be.null;
-						//res.should.have.status(200);
-						console.log(res.body);
+						//console.log(res.body);
 						done();
 					});
 			});
