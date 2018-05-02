@@ -8,10 +8,8 @@ chai.use(chaiHttp);
 
 describe('', () => {
 
-	const gasstationCustomer = {
-		private: 'd98c26d101a5bcc178ea1615e3fb6c003517609da9e8aed46fb32dcba1cac84d',
-		public: '0x7a9c3f6ebf4c4ddbcf8a40b19ebf2589ff7aeb35'
-	}
+	const gasstationCustomer = { private: '2eba3fcf73bd48e1898aa922898a97b0c8a6ab0f052db2920243e99ee19cd6ff',
+  public: '0x57b5a464e656e8438e89167fb39ce798a5ceffb5' }
 
 	let serverInstance;
 	const randomPort = Math.floor(1000 + Math.random() * 9000);

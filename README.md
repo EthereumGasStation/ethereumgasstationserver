@@ -8,6 +8,10 @@ This is the server component of a GasStation
 
 ## Configuration
 
+### Setup your accounts and deploy the gasstation contract
+
+See the repo https://github.com/EthereumGasStation/ethereumgasstation for instructions on how to deploy your gasstation contracts and create the neccesary Ethereum accounts.
+
 ### Option 1 : Environment variables
 
 You can set a number of environment variables to configure the script:
@@ -28,7 +32,11 @@ The Ethereum node connects through a websocket on `localhost` port `8546`
 ### Option 3 : command line parameters
 
 ```
-ethereumgasstationserver --web3hostws "wss://ropsten.infura.io/ws" --port 8887 --contractaddress 0x0000 --privatekey abc
+ethereumgasstationserver \
+ --web3hostws "wss://ropsten.infura.io/ws" \
+ --port 8887 \
+ --contractaddress 0x0000 \
+ --privatekey abc
 ```
 
 Type `ethereumgasstationserver -h` for more info about the available parameters.
